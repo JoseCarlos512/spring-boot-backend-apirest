@@ -94,28 +94,71 @@ public class ClienteRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
+	/**
+	 * BindingResult Se utiliza inmeditamente despues de la clase modelo a evaluar
+	 * @param cliente
+	 * @param result
+	 * @param id
+	 * @return
+	 */
 	@PutMapping("/cliente/{id}")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Cliente update(
-			@RequestBody Cliente cliente,
+	public ResponseEntity<?> update(
+			@Valid @RequestBody Cliente cliente, BindingResult result,
 			@PathVariable Long id
 	) {
 		Cliente clienteActual = clienteService.findById(id);
+		Map<String, Object> response = new HashMap<>();
+		Cliente clienteUpdate = null;
+				
+		if (clienteActual == null) {
+			response.put("error", "Error: no se puede editar, el cliente ID: ".concat(id.toString().concat(" no existe")));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
 		
-		/**
-		 * 	Change the information of customer now
-		 *  with the information that receive controller
-		 */
-		clienteActual.setNombre(cliente.getNombre());
-		clienteActual.setApellido(cliente.getApellido());
-		clienteActual.setEmail(cliente.getEmail());
+		if (result.hasErrors()) {
+			List<String> errors = result.getFieldErrors()
+										.stream()
+										.map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+										.collect(Collectors.toList());
+			response.put("errors", errors);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		}
 		
-		return clienteService.save(clienteActual);
+		
+		try {
+			/**
+			 * 	Change the information of customer now
+			 *  with the information that receive controller
+			 */
+				clienteActual.setNombre(cliente.getNombre());
+				clienteActual.setApellido(cliente.getApellido());
+				clienteActual.setEmail(cliente.getEmail());
+				clienteUpdate = clienteService.save(clienteActual);
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error al realizar update en la base de datos");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put("mensaje", "El cliente se ha actualizado con exito");
+		response.put("cliente", clienteUpdate);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/cliente/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable Long id) {
-		clienteService.delete(id);
+	public ResponseEntity<?> delete(@PathVariable Long id) {
+		
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			clienteService.delete(id);
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error al realizar delete en la base de datos");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		response.put("mensaje", "El cliente se ha eliminado con exito");
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 }
