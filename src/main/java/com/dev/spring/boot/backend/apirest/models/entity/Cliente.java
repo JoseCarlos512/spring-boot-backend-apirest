@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -36,15 +37,15 @@ public class Cliente implements Serializable{
 	@Column(nullable=false, unique=true)
 	private String email;
 	
-	@Column(name = "create_at")
-		
+	@Column(name = "create_at") // Esta column indicada hace referencia a la BD
 	@Temporal(TemporalType.DATE) //Transformar la fecha de java a sql
+	@NotNull(message = "No puede estar vacio")
 	private Date createAt;
 	
-	@PrePersist
-	public void prePersist() {
-		createAt = new Date();
-	}
+	//@PrePersist
+	//public void prePersist() {
+	//	createAt = new Date();
+	//}
 	
 	public Long getId() {
 		return id;

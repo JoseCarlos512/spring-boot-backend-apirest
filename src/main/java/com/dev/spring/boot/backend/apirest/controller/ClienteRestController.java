@@ -68,7 +68,7 @@ public class ClienteRestController {
 			response.put("mensaje", "El cliente ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			return new ResponseEntity<Map<String, Object>>(response,HttpStatus.NOT_FOUND);
 		}
-		
+				
 		return new ResponseEntity<Cliente>(cliente, HttpStatus.OK);
 	}
 	
@@ -139,6 +139,7 @@ public class ClienteRestController {
 			 */
 				clienteActual.setNombre(cliente.getNombre());
 				clienteActual.setApellido(cliente.getApellido());
+				clienteActual.setCreateAt(cliente.getCreateAt());
 				clienteActual.setEmail(cliente.getEmail());
 				clienteUpdate = clienteService.save(clienteActual);
 		} catch (DataAccessException e) {
