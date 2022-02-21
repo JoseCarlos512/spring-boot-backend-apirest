@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.spring.boot.backend.apirest.models.entity.Cliente;
+import com.dev.spring.boot.backend.apirest.models.entity.Region;
 import com.dev.spring.boot.backend.apirest.models.services.IClienteService;
 import com.dev.spring.boot.backend.apirest.models.services.IUploadFileService;
 
@@ -149,6 +150,7 @@ public class ClienteRestController {
 				clienteActual.setApellido(cliente.getApellido());
 				clienteActual.setCreateAt(cliente.getCreateAt());
 				clienteActual.setEmail(cliente.getEmail());
+				clienteActual.setRegion(cliente.getRegion());
 				clienteUpdate = clienteService.save(clienteActual);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al realizar update en la base de datos");
@@ -235,5 +237,10 @@ public class ClienteRestController {
 		 */
 		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
 		return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
+	}
+	
+	@GetMapping("/clientes/regiones")
+	public List<Region> listarRegiones() {
+		return clienteService.findAllRegiones();
 	}
 }
