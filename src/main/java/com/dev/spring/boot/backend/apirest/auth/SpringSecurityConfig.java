@@ -29,15 +29,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 	 * solo que aca lo haces para registrar metodos con @Bean
 	 */
 	
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+//	@Bean
+//	public BCryptPasswordEncoder passwordEncoder() {
+//		return new BCryptPasswordEncoder();
+//	}
+
+    @Bean
+    public static BCryptPasswordEncoder bcryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 	
 	@Override
 	@Autowired
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(this.usuarioService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(this.usuarioService).passwordEncoder(bcryptPasswordEncoder());
 	}
 	
 	@Bean("authenticationManager")
