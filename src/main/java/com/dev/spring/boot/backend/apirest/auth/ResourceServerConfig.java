@@ -20,10 +20,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 		 */
 		http.authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/api/clientes", "/api/clientes/page/**", "/api/uploads/img/**").permitAll()
-		.antMatchers(HttpMethod.GET, "/api/cliente/{id}").hasAnyRole("USER", "ADMIN")
+		/*.antMatchers(HttpMethod.GET, "/api/cliente/{id}").hasAnyRole("USER", "ADMIN")
 		.antMatchers(HttpMethod.POST, "/api/cliente/upload").hasAnyRole("USER", "ADMIN")
 		.antMatchers(HttpMethod.POST, "/api/cliente").hasRole("ADMIN")
-		.antMatchers("/api/cliente/**").hasRole("ADMIN")
+		.antMatchers("/api/cliente/**").hasRole("ADMIN")*/
 		.anyRequest()
 		.authenticated();
 	}
