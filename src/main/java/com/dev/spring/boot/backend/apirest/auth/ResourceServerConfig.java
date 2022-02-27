@@ -18,8 +18,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 		 * antMatchers dentro de este metodo iran todas las 
 		 * rutas que no necesitan autenticacion
 		 */
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/clientes")
-		.permitAll()
+		http.authorizeRequests()
+		.antMatchers(HttpMethod.GET, "/api/clientes", "/api/clientes/page/**", "/api/uploads/img/**").permitAll()
+		.antMatchers(HttpMethod.GET, "/api/cliente/{id}").hasAnyRole("USER", "ADMIN")
+		.antMatchers(HttpMethod.POST, "/api/cliente/upload").hasAnyRole("USER", "ADMIN")
+		.antMatchers(HttpMethod.POST, "/api/cliente").hasRole("ADMIN")
+		.antMatchers("/api/cliente/**").hasRole("ADMIN")
 		.anyRequest()
 		.authenticated();
 	}
