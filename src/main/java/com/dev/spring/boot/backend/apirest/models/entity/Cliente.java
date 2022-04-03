@@ -1,7 +1,11 @@
 package com.dev.spring.boot.backend.apirest.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -53,6 +58,17 @@ public class Cliente implements Serializable{
 	@JoinColumn(name = "region_id") // Si no lo ponemos, igual lo haria automaticamente cogiendo el nombre_id
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private Region region;
+	
+	@JsonIgnoreProperties({"clientes", "hibernateLazyInitializer", "handler"})
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente", cascade = CascadeType.ALL)
+	private List<Factura> facturas;
+	
+	/**
+	 * Inicializamos la clase
+	 */
+	public Cliente() {
+		this.facturas = new ArrayList<>();
+	}
 	
 	//@PrePersist
 	//public void prePersist() {
@@ -109,6 +125,21 @@ public class Cliente implements Serializable{
 	public void setRegion(Region region) {
 		this.region = region;
 	}
+	
+	
+
+	/**
+	 * Gneramos la relacion de muchas
+	 * facturas que contiene un cliente
+	 * @return
+	 */
+	public List<Factura> getFacturas() {
+		return facturas;
+	}
+	public void setFacturas(List<Factura> facturas) {
+		this.facturas = facturas;
+	}
+
 
 
 
